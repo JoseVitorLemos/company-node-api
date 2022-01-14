@@ -2,27 +2,30 @@
   "name": "company-node-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "scripts": {
-		"dev": "nodemon src/server.ts"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/josevitorlemos/company-node-api.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/josevitorlemos/company-node-api/issues"
-  },
-  "homepage": "https://github.com/josevitorlemos/company-node-api#readme",
-  "devDependencies": {
-    "nodemon": "^2.0.15",
-    "typescript": "^4.5.4"
-  },
-  "dependencies": {
-    "@types/express": "^4.17.13",
-    "express": "^4.17.2"
-  }
+	"main": "index.js",
+	"scripts": {
+		"start": "node -r dotenv/config ./dist/server.js",
+		"dev": "nodemon -r dotenv/config src/server.ts",
+		"build": "tsc"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/josevitorlemos/company-node-api.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/josevitorlemos/company-node-api/issues"
+	},
+	"homepage": "https://github.com/josevitorlemos/company-node-api#readme",
+	"devDependencies": {
+		"dotenv": "^11.0.0",
+		"nodemon": "^2.0.15",
+		"typescript": "^4.5.4"
+	},
+	"dependencies": {
+		"@types/express": "^4.17.13",
+		"express": "^4.17.2"
+	}
 }
