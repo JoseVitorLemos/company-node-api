@@ -7,8 +7,9 @@ export async function up(knex: Knex) {
 		table.string('cpf').notNullable()
 		table.string('cnpj').notNullable()
 		table.string('phone').notNullable()
+		table.date('birth_date').nullable()
 		table.dateTime('created_at').notNullable()
-		table.dateTime('updated_at').notNullable()
+		table.dateTime('updated_at').nullable()
 	})
 }
 

@@ -7,7 +7,7 @@ export async function up(knex: Knex) {
 		table.string('trade_name').notNullable()
 		table.string('cnpj').notNullable()
 		table.dateTime('created_at').notNullable()
-		table.dateTime('updated_at').notNullable()
+		table.dateTime('updated_at').nullable()
 		})
 }
 
