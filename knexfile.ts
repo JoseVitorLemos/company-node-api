@@ -1,12 +1,11 @@
-import path from 'path';
+import path from 'path'
+import config from './src/infra/database/config'
 
 module.exports = {    
-	client: 'sqlite',
-	connection: {
-		filename: path.resolve(__dirname, 'src', 'infra', 'db', 'database.sqlite')
-	},
+	client: 'pg',
+	connection: config,
 	migrations: {
-		directory: path.resolve(__dirname, 'src', 'infra', 'db', 'migrations')
+		directory: path.resolve(__dirname, 'src', 'infra', 'migrations')
 	},
 	useNullAsDefault: true
 }
