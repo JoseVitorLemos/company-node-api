@@ -7,12 +7,14 @@ class CompanyDto {
 		this.cnpj = cnpj
 	}	
 
-  @Length(2)
+  @Length(2, 2, { message: 'uf must be two characters' })
+	@IsString()
   uf: string;
 
+	@Length(4, 20)
 	@IsString()
   trade_name: string
-	
+
 	@IsString()
   cnpj: string 
 }

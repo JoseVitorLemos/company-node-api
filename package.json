@@ -29,7 +29,9 @@
 	},
 	"dependencies": {
 		"class-validator": "^0.13.2",
+		"cpf-cnpj-validator": "^1.0.3",
 		"express": "^4.17.2",
+		"joi": "^17.5.0",
 		"knex": "^0.95.15",
 		"pg": "^8.7.1"
 	}
