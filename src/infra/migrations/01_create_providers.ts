@@ -5,11 +5,17 @@ export async function up(knex: Knex) {
 		table.increments('id').primary()
 		table.string('name').notNullable()
 		table.string('cpf').nullable()
+		table.string('rg').nullable()
 		table.string('cnpj').nullable()
 		table.string('phone').notNullable()
 		table.date('birth_date').nullable()
 		table.dateTime('created_at').notNullable()
 		table.dateTime('updated_at').nullable()
+
+		table.integer('company_id')
+			.notNullable()
+			.references('id')
+			.inTable('companys')
 	})
 }
 
