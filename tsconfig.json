@@ -9,6 +9,7 @@
 		"skipLibCheck": true,
 		"strict": true,
 		"experimentalDecorators": true,
-		"strictPropertyInitialization": false
+		"strictPropertyInitialization": false,
+		"no-unused-variable": [true, { "ignore-pattern": "^_" }]
 	}
 }
