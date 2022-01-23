@@ -1,5 +1,7 @@
 import { Router } from 'express'
 import knex from '../infra/database/connection'
+import { cpfValidate, cnpjValidate, removeSymbols } from '../helper'
+//import { validate } from 'class-validator'
 
 const providerRoute = Router()
 
@@ -15,9 +17,13 @@ providerRoute.post('/', async (req, res) => {
 	} = req.body
 
 	if(cpf) {
+		const cpfCheck = cpfValidate(cpf)
+
+		if(!cpfCheck) return res.status(400).json({ statusCode: 400, message: 'Invalid cpf' })
+
 		const id = await knex('providers').insert({
 			name, 
-			cpf, 
+			cpf: removeSymbols(cpf),
 			rg, 
 			phone, 
 			birth_date, 
@@ -31,9 +37,13 @@ providerRoute.post('/', async (req, res) => {
 	}
 
 	if(cnpj) {
+		const cnpjCheck = cnpjValidate(cpf)
+
+		if(!cnpjCheck) return res.status(400).json({ statusCode: 400, message: 'Invalid cnpj' })
+
 		const id = await knex('providers').insert({
 			name, 
-			cnpj, 
+			cnpj: removeSymbols(cnpj),
 			phone, 
 			company_id, 
 			created_at: new Date()
@@ -50,6 +60,20 @@ providerRoute.post('/', async (req, res) => {
 			created_at: legalPerson.created_at
 		})
 	}
+})
+
+providerRoute.get('/:id', async (req, res) => {
+	const { id } = req.params
+
+	const provider = await knex('providers').where('id', id).first()
+
+	if(!provider) { 
+		return res.status(400).json({
+			statusCode: 400,
+			message: 'Provider not found'
+		}) 
+	}
+	res.status(200).json(provider)
 })
 
 export default providerRoute
