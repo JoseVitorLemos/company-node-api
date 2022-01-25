@@ -40,7 +40,9 @@ providerRoute.post('/', async (req, res) => {
 					message: message
 		  	})
 			} else {
+				const company = await knex('companys').where('id', company_id).first()
 
+				if(!company) return res.status(400).json({ statusCode: 400, message: 'None company was found'  })
 
 				const transaction = await knex.transaction()
 
@@ -49,11 +51,6 @@ providerRoute.post('/', async (req, res) => {
 					phone, 
 					created_at: new Date()
 				}).returning('id').then(id => id[0])
-
-
-				const company = await knex('companys').where('id', company_id).first()
-
-				if(!company) return res.status(400).json({ statusCode: 400, message: 'None company was found'  })
 
 				const provider_id = await transaction('natural_persons').insert({
 					cpf: removeSymbols(cpf),
@@ -90,6 +87,10 @@ providerRoute.post('/', async (req, res) => {
 					message: message
 		  	})
 			} else {
+				const company = await knex('companys').where('id', company_id).first()
+
+				if(!company) return res.status(400).json({ statusCode: 400, message: 'None company was found'  })
+
 				const transaction = await knex.transaction()
 
 				const person_id = await transaction('persons').insert({
@@ -110,7 +111,7 @@ providerRoute.post('/', async (req, res) => {
 
 				const person = await knex('persons').where('id', person_id).first()
 
-				return res.status(201).json(Object.assign({}, legalPerson, person))
+				return res.status(201).json(Object.assign({}, legalPerson, person, { company_name: company.trade_name }))
 	  	}
 		})
 	}
