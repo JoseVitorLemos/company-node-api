@@ -1,7 +1,6 @@
 import { Router } from 'express'
 import knex from '../infra/database/connection'
 import { cpfValidate, cnpjValidate, removeSymbols } from '../helper'
-//import { validate } from 'class-validator'
 
 const providerRoute = Router()
 
@@ -21,59 +20,58 @@ providerRoute.post('/', async (req, res) => {
 
 		if(!cpfCheck) return res.status(400).json({ statusCode: 400, message: 'Invalid cpf' })
 
-		const id = await knex('providers').insert({
+		const transaction = await knex.transaction()
+
+		const person_id = await transaction('persons').insert({
 			name, 
-			cpf: removeSymbols(cpf),
-			rg, 
 			phone, 
-			birth_date, 
-			company_id, 
 			created_at: new Date()
 		}).returning('id').then(id => id[0])
 
-		const naturalPerson = await knex('providers').where('id', id).first()
+		const provider_id = await transaction('natural_persons').insert({
+			cpf: removeSymbols(cpf),
+			rg, 
+			birth_date, 
+			company_id, 
+			person_id
+		}).returning('id').then(id => id[0])
 
-		return res.status(201).json(naturalPerson)
+		await transaction.commit()
+
+		const naturalPerson = await knex('natural_persons').where('id', provider_id).first()
+
+		const person = await knex('persons').where('id', person_id).first()
+
+		return res.status(201).json(Object.assign({}, naturalPerson, person))
 	}
 
 	if(cnpj) {
-		const cnpjCheck = cnpjValidate(cpf)
+		const cnpjCheck = cnpjValidate(cnpj)
 
 		if(!cnpjCheck) return res.status(400).json({ statusCode: 400, message: 'Invalid cnpj' })
 
-		const id = await knex('providers').insert({
-			name, 
-			cnpj: removeSymbols(cnpj),
-			phone, 
-			company_id, 
+		const transaction = await knex.transaction()
+
+		const person_id = await transaction('persons').insert({
+			name,
+			phone,
 			created_at: new Date()
 		}).returning('id').then(id => id[0])
 
-		const legalPerson = await knex('providers').where('id', id).first()
+		const provider_id = await transaction('legal_persons').insert({
+			cnpj: removeSymbols(cnpj),
+			company_id,
+			person_id
+		}).returning('id').then(id => id[0])
 
-		return res.status(201).json({
-			id: legalPerson.id,
-			name: legalPerson.name,
-			cnpj: legalPerson.cnpj,
-			phone: legalPerson.phone,
-			company_id: legalPerson.company_id,
-			created_at: legalPerson.created_at
-		})
+		await transaction.commit()
+
+		const legalPerson = await knex('legal_persons').where('id', provider_id).first()
+
+		const person = await knex('persons').where('id', person_id).first()
+
+		return res.status(201).json(Object.assign({}, legalPerson, person))
 	}
-})
-
-providerRoute.get('/:id', async (req, res) => {
-	const { id } = req.params
-
-	const provider = await knex('providers').where('id', id).first()
-
-	if(!provider) { 
-		return res.status(400).json({
-			statusCode: 400,
-			message: 'Provider not found'
-		}) 
-	}
-	res.status(200).json(provider)
 })
 
 export default providerRoute
