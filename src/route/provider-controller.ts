@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import knex from '../infra/database/connection'
-import { cpfValidate, cnpjValidate, removeSymbols } from '../helper'
+import { cpfValidate, cnpjValidate, removeSymbols, getAge } from '../helper'
 import { NaturalPersonDto, LegalPersonDto } from './dto'
 import { validate } from 'class-validator'
 
@@ -16,6 +16,13 @@ providerRoute.post('/', async (req, res) => {
 		birth_date, 
 		company_id
 	} = req.body
+
+	if(getAge(birth_date) < 18) {
+		return res.status(400).json({ 
+			statusCode: 400, 
+			message: 'Is not allowed to register a minor, as a provider natural person' 
+		})
+	}
 
 	const naturalPersonValidate = new NaturalPersonDto(name, phone, cpf, rg, birth_date, company_id)
 
