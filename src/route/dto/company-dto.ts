@@ -1,6 +1,6 @@
 import { IsString, Length } from 'class-validator'
 
-class CompanyDto {
+export class CompanyDto {
 	constructor(uf: string, trade_name: string, cnpj: string) {
 		this.uf = uf
 		this.trade_name = trade_name
@@ -18,5 +18,3 @@ class CompanyDto {
 	@IsString()
   cnpj: string 
 }
-
-export default CompanyDto

@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import knex from '../infra/database/connection'
-import CompanyDto from './dto/company-dto'
+import { CompanyDto } from './dto'
 import { validate } from 'class-validator'
 import { cnpjValidate, removeSymbols } from '../helper'
 
