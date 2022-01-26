@@ -42,7 +42,7 @@ providerRoute.post('/', async (req, res) => {
 			} else {
 				const company = await knex('companys').where('id', company_id).first()
 
-				if(!company) return res.status(400).json({ statusCode: 400, message: 'None company was found'  })
+				if(!company) return res.status(400).json({ statusCode: 400, message: 'None company was found' })
 
 				const transaction = await knex.transaction()
 
@@ -60,13 +60,14 @@ providerRoute.post('/', async (req, res) => {
 					person_id
 				}).returning('id').then(id => id[0])
 
+				const naturalPerson = await transaction('natural_persons').where('natural_persons.id', provider_id).first()
+				.join('persons', 'natural_persons.person_id', '=', 'persons.id')
+				.join('companys', 'natural_persons.company_id', '=', 'companys.id')
+				.select('natural_persons.id', 'natural_persons.cpf', 'natural_persons.rg', 'natural_persons.birth_date', 'persons.name', 'persons.phone', 'companys.trade_name')
+
 				await transaction.commit()
 
-				const naturalPerson = await knex('natural_persons').where('id', provider_id).first()
-
-				const person = await knex('persons').where('id', person_id).first()
-
-				return res.status(201).json(Object.assign({}, naturalPerson, person))
+				return res.status(201).json(naturalPerson)
 	  	}
 		})
 	}
@@ -87,7 +88,7 @@ providerRoute.post('/', async (req, res) => {
 					message: message
 		  	})
 			} else {
-				const company = await knex('companys').where('id', company_id).first()
+				const company = await knex('companys').where('companys.id', company_id).first()
 
 				if(!company) return res.status(400).json({ statusCode: 400, message: 'None company was found'  })
 
@@ -105,17 +106,17 @@ providerRoute.post('/', async (req, res) => {
 					person_id
 				}).returning('id').then(id => id[0])
 
+				const legalPerson = await transaction('legal_persons').where('legal_persons.id', provider_id).first()
+				.join('persons', 'legal_persons.person_id', '=', 'persons.id')
+				.join('companys', 'legal_persons.company_id', '=', 'companys.id')
+				.select('legal_persons.id', 'legal_persons.cnpj', 'persons.name', 'persons.phone', 'companys.trade_name')
+
 				await transaction.commit()
 
-				const legalPerson = await knex('legal_persons').where('id', provider_id).first()
-
-				const person = await knex('persons').where('id', person_id).first()
-
-				return res.status(201).json(Object.assign({}, legalPerson, person, { company_name: company.trade_name }))
+				return res.status(201).json(legalPerson)
 	  	}
 		})
 	}
 })
 
 export default providerRoute
-
