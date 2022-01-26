@@ -63,7 +63,7 @@ providerRoute.post('/', async (req, res) => {
 				const naturalPerson = await transaction('natural_persons').where('natural_persons.id', provider_id).first()
 				.join('persons', 'natural_persons.person_id', '=', 'persons.id')
 				.join('companys', 'natural_persons.company_id', '=', 'companys.id')
-				.select('natural_persons.id', 'natural_persons.cpf', 'natural_persons.rg', 'natural_persons.birth_date', 'persons.name', 'persons.phone', 'companys.trade_name')
+				.select('natural_persons.id', 'natural_persons.cpf', 'natural_persons.rg', 'natural_persons.birth_date', 'persons.name', 'persons.phone', 'companys.trade_name', 'persons.created_at')
 
 				await transaction.commit()
 
@@ -90,7 +90,7 @@ providerRoute.post('/', async (req, res) => {
 			} else {
 				const company = await knex('companys').where('companys.id', company_id).first()
 
-				if(!company) return res.status(400).json({ statusCode: 400, message: 'None company was found'  })
+				if(!company) return res.status(400).json({ statusCode: 400, message: 'None company was found' })
 
 				const transaction = await knex.transaction()
 
@@ -109,13 +109,50 @@ providerRoute.post('/', async (req, res) => {
 				const legalPerson = await transaction('legal_persons').where('legal_persons.id', provider_id).first()
 				.join('persons', 'legal_persons.person_id', '=', 'persons.id')
 				.join('companys', 'legal_persons.company_id', '=', 'companys.id')
-				.select('legal_persons.id', 'legal_persons.cnpj', 'persons.name', 'persons.phone', 'companys.trade_name')
+				.select('legal_persons.id', 'legal_persons.cnpj', 'persons.name', 'persons.phone', 'companys.trade_name', 'persons.created_at')
 
 				await transaction.commit()
 
 				return res.status(201).json(legalPerson)
 	  	}
 		})
+	}
+})
+
+providerRoute.get('/', async (req, res) => {
+	const { cpf, cnpj, birth_date } = req.query
+
+	if(cpf) {
+		const provider = await knex('natural_persons').where('natural_persons.cpf', removeSymbols(cpf!.toString()))
+		.join('persons', 'natural_persons.person_id', '=', 'persons.id')
+		.join('companys', 'natural_persons.company_id', '=', 'companys.id')
+		.select('natural_persons.id', 'natural_persons.cpf', 'natural_persons.rg', 'natural_persons.birth_date', 'persons.name', 'persons.phone', 'companys.trade_name', 'persons.created_at')
+
+		if(!provider) return res.status(400).json({ statusCode: 400, message: 'Provider not found' })
+
+		return res.status(200).json(provider)
+	}
+
+	if(cnpj) {
+		const provider = await knex('legal_persons').where('legal_persons.cnpj', removeSymbols(cnpj.toString()))
+		.join('persons', 'legal_persons.person_id', '=', 'persons.id')
+		.join('companys', 'legal_persons.company_id', '=', 'companys.id')
+		.select('legal_persons.id', 'legal_persons.cnpj', 'persons.name', 'persons.phone', 'companys.trade_name', 'persons.created_at')
+
+		if(!provider) return res.status(400).json({ statusCode: 400, message: 'Provider not found' })
+
+		return res.status(200).json(provider)
+	}
+
+	if(birth_date) {
+		const provider = await knex('natural_persons').where('natural_persons.birth_date', birth_date.toString())
+		.join('persons', 'natural_persons.person_id', '=', 'persons.id')
+		.join('companys', 'natural_persons.company_id', '=', 'companys.id')
+		.select('natural_persons.id', 'natural_persons.cpf', 'natural_persons.rg', 'natural_persons.birth_date', 'persons.name', 'persons.phone', 'companys.trade_name', 'persons.created_at')
+
+		if(!provider) return res.status(400).json({ statusCode: 400, message: 'Provider not found' })
+
+		return res.status(200).json(provider)
 	}
 })
 
