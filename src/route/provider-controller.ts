@@ -42,7 +42,7 @@ providerRoute.post('/', async (req, res) => {
 			} else {
 				const company = await knex('companys').where('id', company_id).first()
 
-				if(!company) return res.status(400).json({ statusCode: 400, message: 'None company was found' })
+				if(!company) return res.status(404).json({ statusCode: 404, message: 'Company not found' })
 
 				const transaction = await knex.transaction()
 
@@ -128,7 +128,7 @@ providerRoute.get('/', async (req, res) => {
 		.join('companys', 'natural_persons.company_id', '=', 'companys.id')
 		.select('natural_persons.id', 'natural_persons.cpf', 'natural_persons.rg', 'natural_persons.birth_date', 'persons.name', 'persons.phone', 'companys.trade_name', 'persons.created_at')
 
-		if(!provider) return res.status(400).json({ statusCode: 400, message: 'Provider not found' })
+		if(!provider) return res.status(404).json({ statusCode: 404, message: 'Provider not found' })
 
 		return res.status(200).json(provider)
 	}
@@ -139,7 +139,7 @@ providerRoute.get('/', async (req, res) => {
 		.join('companys', 'legal_persons.company_id', '=', 'companys.id')
 		.select('legal_persons.id', 'legal_persons.cnpj', 'persons.name', 'persons.phone', 'companys.trade_name', 'persons.created_at')
 
-		if(!provider) return res.status(400).json({ statusCode: 400, message: 'Provider not found' })
+		if(!provider) return res.status(404).json({ statusCode: 404, message: 'Provider Not found' })
 
 		return res.status(200).json(provider)
 	}
@@ -150,10 +150,12 @@ providerRoute.get('/', async (req, res) => {
 		.join('companys', 'natural_persons.company_id', '=', 'companys.id')
 		.select('natural_persons.id', 'natural_persons.cpf', 'natural_persons.rg', 'natural_persons.birth_date', 'persons.name', 'persons.phone', 'companys.trade_name', 'persons.created_at')
 
-		if(!provider) return res.status(400).json({ statusCode: 400, message: 'Provider not found' })
+		if(!provider) return res.status(404).json({ statusCode: 404, message: 'Provider not found' })
 
 		return res.status(200).json(provider)
 	}
+
+	return res.status(400).send([])
 })
 
 export default providerRoute

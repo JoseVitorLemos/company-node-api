@@ -44,7 +44,7 @@ companyController.post('/', async (req, res) => {
 
 companyController.get('/', async (_req, res) => {
 	const company = await knex('*').from('companys')
-	if(!company) res.status(400).json({ statusCode: 400, message: 'None company was found' })
+	if(!company) res.status(404).json({ statusCode: 404, message: 'Company not found' })
 	res.status(200).json(company)
 })
 
