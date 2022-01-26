@@ -40,34 +40,39 @@ providerRoute.post('/', async (req, res) => {
 					message: message
 		  	})
 			} else {
-				const company = await knex('companys').where('id', company_id).first()
+				try {
+					const company = await knex('companys').where('id', company_id).first()
 
-				if(!company) return res.status(404).json({ statusCode: 404, message: 'Company not found' })
+					if(!company) return res.status(404).json({ statusCode: 404, message: 'Company not found' })
 
-				const transaction = await knex.transaction()
+					const transaction = await knex.transaction()
 
-				const person_id = await transaction('persons').insert({
-					name, 
-					phone, 
-					created_at: new Date()
-				}).returning('id').then(id => id[0])
+					const person_id = await transaction('persons').insert({
+						name, 
+						phone,
+						created_at: new Date()
+					}).returning('id').then(id => id[0])
 
-				const provider_id = await transaction('natural_persons').insert({
-					cpf: removeSymbols(cpf),
-					rg, 
-					birth_date, 
-					company_id, 
-					person_id
-				}).returning('id').then(id => id[0])
+					const provider_id = await transaction('natural_persons').insert({
+						cpf: removeSymbols(cpf),
+						rg, 
+						birth_date, 
+						company_id, 
+						person_id
+					}).returning('id').then(id => id[0])
 
-				const naturalPerson = await transaction('natural_persons').where('natural_persons.id', provider_id).first()
-				.join('persons', 'natural_persons.person_id', '=', 'persons.id')
-				.join('companys', 'natural_persons.company_id', '=', 'companys.id')
-				.select('natural_persons.id', 'natural_persons.cpf', 'natural_persons.rg', 'natural_persons.birth_date', 'persons.name', 'persons.phone', 'companys.trade_name', 'persons.created_at')
+					const naturalPerson = await transaction('natural_persons').where('natural_persons.id', provider_id).first()
+					.join('persons', 'natural_persons.person_id', '=', 'persons.id')
+					.join('companys', 'natural_persons.company_id', '=', 'companys.id')
+					.select('natural_persons.id', 'natural_persons.cpf', 'natural_persons.rg', 'natural_persons.birth_date', 'persons.name', 'persons.phone', 'companys.trade_name', 'persons.created_at')
 
-				await transaction.commit()
+					await transaction.commit()
 
-				return res.status(201).json(naturalPerson)
+					return res.status(201).json(naturalPerson)
+				} catch (err) {
+					console.log(err)
+					return res.status(500).send({ statusCode: 500, 	message: 'Internal Server Error' })
+				}
 	  	}
 		})
 	}
@@ -88,32 +93,37 @@ providerRoute.post('/', async (req, res) => {
 					message: message
 		  	})
 			} else {
-				const company = await knex('companys').where('companys.id', company_id).first()
+				try {
+					const company = await knex('companys').where('companys.id', company_id).first()
 
-				if(!company) return res.status(400).json({ statusCode: 400, message: 'None company was found' })
+					if(!company) return res.status(400).json({ statusCode: 400, message: 'Comapny not found' })
 
-				const transaction = await knex.transaction()
+					const transaction = await knex.transaction()
 
-				const person_id = await transaction('persons').insert({
-					name,
-					phone,
-					created_at: new Date()
-				}).returning('id').then(id => id[0])
+					const person_id = await transaction('persons').insert({
+						name,
+						phone,
+						created_at: new Date()
+					}).returning('id').then(id => id[0])
 
-				const provider_id = await transaction('legal_persons').insert({
-					cnpj: removeSymbols(cnpj),
-					company_id,
-					person_id
-				}).returning('id').then(id => id[0])
+					const provider_id = await transaction('legal_persons').insert({
+						cnpj: removeSymbols(cnpj),
+						company_id,
+						person_id
+					}).returning('id').then(id => id[0])
 
-				const legalPerson = await transaction('legal_persons').where('legal_persons.id', provider_id).first()
-				.join('persons', 'legal_persons.person_id', '=', 'persons.id')
-				.join('companys', 'legal_persons.company_id', '=', 'companys.id')
-				.select('legal_persons.id', 'legal_persons.cnpj', 'persons.name', 'persons.phone', 'companys.trade_name', 'persons.created_at')
+					const legalPerson = await transaction('legal_persons').where('legal_persons.id', provider_id).first()
+					.join('persons', 'legal_persons.person_id', '=', 'persons.id')
+					.join('companys', 'legal_persons.company_id', '=', 'companys.id')
+					.select('legal_persons.id', 'legal_persons.cnpj', 'persons.name', 'persons.phone', 'companys.trade_name', 'persons.created_at')
 
-				await transaction.commit()
+					await transaction.commit()
 
-				return res.status(201).json(legalPerson)
+					return res.status(201).json(legalPerson)
+ 				} catch (err) {
+					console.log(err)
+					return res.status(500).send({ statusCode: 500, 	message: 'Internal Server Error' })
+				}
 	  	}
 		})
 	}

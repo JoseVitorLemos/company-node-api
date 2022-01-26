@@ -36,7 +36,7 @@ companyController.post('/', async (req, res) => {
 				return res.status(201).json(company)
 			} catch (err) {
 				console.log(err)
-				return res.status(500).send({ statusCode: 500, 	message: 'Create company fail' })
+				return res.status(500).send({ statusCode: 500, 	message: 'Company registration failure' })
 			}
 		}
 	})
