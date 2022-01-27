@@ -7,7 +7,8 @@
 		"start": "node -r dotenv/config dist/src/server.js",
 		"dev": "nodemon -r dotenv/config src/server.ts",
 		"build": "tsc",
-		"knex:migrate": "knex --knexfile knexfile.ts migrate:latest"
+		"knex:migrate": "knex --knexfile knexfile.ts migrate:latest",
+		"knex:seed": "knex seed:run"
 	},
 	"repository": {
 		"type": "git",
