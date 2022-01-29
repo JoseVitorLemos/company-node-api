@@ -58,5 +58,17 @@ describe('Company Controller', () => {
 			}
 			])
 		})	
+
+		test('Should return 400 if cnpj is no provided', async () => {
+			const { body, statusCode } = await request(app)
+			.post('/company')
+			.send({ 
+				uf: 'TO',	
+				trade_name: 'Empresa 1', 
+				created_at: new Date() 
+			})
+			expect(statusCode).toBe(400)
+			expect(body.message).toBe('invalid cnpj')
+		})	
 	})
 })
