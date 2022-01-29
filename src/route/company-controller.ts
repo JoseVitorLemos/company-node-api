@@ -16,7 +16,6 @@ companyController.post('/', async (req, res) => {
 	validate(repo).then(async err => {
 		if (err.length) {
 			const message = err.map(prop => prop.constraints) 
-		  console.log('Invalid params')
 			return res.status(400).json({
 				statusCode: 400,
 				message: message
@@ -35,7 +34,6 @@ companyController.post('/', async (req, res) => {
 
 				return res.status(201).json(company)
 			} catch (err) {
-				console.log(err)
 				return res.status(500).send({ statusCode: 500, 	message: 'Company registration failure' })
 			}
 		}

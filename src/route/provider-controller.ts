@@ -34,7 +34,6 @@ providerRoute.post('/', async (req, res) => {
 		validate(naturalPersonValidate).then(async err => {
 	  	if (err.length) {
 				const message = err.map(prop => prop.constraints) 
-		  	console.log('Invalid params')
 				return res.status(400).json({
 					statusCode: 400,
 					message: message
@@ -87,7 +86,6 @@ providerRoute.post('/', async (req, res) => {
 		validate(legalPersonValidate).then(async err => {
 	  	if (err.length) {
 				const message = err.map(prop => prop.constraints) 
-		  	console.log('Invalid params')
 				return res.status(400).json({
 					statusCode: 400,
 					message: message
