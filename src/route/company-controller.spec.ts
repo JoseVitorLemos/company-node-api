@@ -27,7 +27,21 @@ describe('Company Controller', () => {
 			expect(body.trade_name).toBe(mockCompany.trade_name)
 			expect(body.cnpj).toBe(mockCompany.cnpj)
 		})	
+
+		test('Should return 400 if uf is no provided', async () => {
+			const { body, statusCode } = await request(app)
+			.post('/company')
+			.send({ 
+				trade_name: 'Empresa 1', 
+				cnpj: cnpj.generate(), 
+			})
+			expect(statusCode).toBe(400)
+			expect(body.message).toEqual([
+			  {
+			    isString: 'uf must be a string',
+			    isLength: 'uf must be two characters'
+			  }
+			])
+		})		
 	})
 })
-
-
