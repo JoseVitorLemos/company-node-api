@@ -71,4 +71,15 @@ describe('Company Controller', () => {
 			expect(body.message).toBe('invalid cnpj')
 		})	
 	})
+
+	describe('GET', () => {
+		test('Should return 200 if find company success', async () => {
+			await server.post('/company').send(mockCompany)	
+
+			const { body, statusCode } = await request(app).get('/company')
+
+			expect(statusCode).toBe(200)
+			expect(body).toBeTruthy()
+		})
+	})
 })
