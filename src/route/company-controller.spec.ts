@@ -43,5 +43,20 @@ describe('Company Controller', () => {
 			  }
 			])
 		})		
+
+		test('Should return 400 if trade name is no provided', async () => {
+			const { body, statusCode } = await request(app)
+			.post('/company')
+			.send({ 
+				uf: 'TO',	
+				cnpj: cnpj.generate(), 
+			})
+			expect(statusCode).toBe(400)
+			expect(body.message).toEqual([{
+				isLength: "trade_name must be longer than or equal to 4 characters", 
+				isString: "trade_name must be a string"
+			}
+			])
+		})	
 	})
 })
