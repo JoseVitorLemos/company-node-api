@@ -46,4 +46,20 @@ companyController.get('/', async (_req, res) => {
 	res.status(200).json(company)
 })
 
+companyController.delete('/:id', async (req, res) => {
+	try {
+		const { id } = req.params
+		console.log(id)
+		await knex('companys').where('companys.id', id).del().then(
+			prop => {
+				if(prop == 0) return res.status(400).send({ statusCode: 400, message: 'Company whit that id was does not exist' })
+			}
+		)
+		return res.status(200).json(`Company with id ${id} deleted successfully`)
+	} catch (err) {
+		console.log(err)
+		return res.status(400).json({ statusCode: 400, message: `Erro delete a company with id = ${req.params.id}` })	
+	}
+})
+
 export default companyController

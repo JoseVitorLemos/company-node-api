@@ -9,7 +9,7 @@
     "build": "tsc",
     "knex:migrate": "knex --knexfile knexfile.ts migrate:latest",
     "knex:seed": "knex seed:run",
-    "test": "jest"
+    "test": "jest --verbose"
   },
   "repository": {
     "type": "git",

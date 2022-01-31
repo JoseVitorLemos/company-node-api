@@ -73,9 +73,15 @@ describe('Company Controller', () => {
 	})
 
 	describe('GET', () => {
-		test('Should return 200 if find company success', async () => {
-			await server.post('/company').send(mockCompany)	
+		beforeEach(async () => {
+			const { body } = await server.post('/company').send(mockCompany)
+		})
 
+		afterEach(async () => {
+			
+		})
+
+		test('Should return 200 if find company success', async () => {
 			const { body, statusCode } = await request(app).get('/company')
 
 			expect(statusCode).toBe(200)
