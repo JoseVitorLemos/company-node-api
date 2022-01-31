@@ -65,6 +65,22 @@ describe('Company Controller', () => {
 			expect(statusCode).toBe(400)
 			expect(body.message).toEqual([{ isString: 'name must be a string' }])
 		})
+
+		test('Should return 400 if trying create natural person with invalid cpf provided', async () => {
+			const { body, statusCode } = await server
+			.post('/provider')
+			.send({
+				name: 'any_name',
+				cpf: 'invalid_cpf',
+				rg: 'any_rg', 
+				phone: '63999999', 
+				birth_date: '1995-05-05',
+				company_id: 1
+			})
+
+			expect(statusCode).toBe(400)
+			expect(body.message).toEqual('Invalid cpf')
+		})
 	})	
 })	
 
