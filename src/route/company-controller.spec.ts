@@ -6,7 +6,9 @@ import { cnpj } from 'cpf-cnpj-validator'
 describe('Company Controller', () => {
 	const server = request(app)
 
-	afterAll(() => knex.destroy())
+	afterAll(async () => { 
+		knex.destroy()
+	})
 
 	const mockCompany = {
 		uf: 'TO',
@@ -29,7 +31,7 @@ describe('Company Controller', () => {
 		})	
 
 		test('Should return 400 if uf is no provided', async () => {
-			const { body, statusCode } = await request(app)
+			const { body, statusCode } = await server 
 			.post('/company')
 			.send({ 
 				trade_name: 'Empresa 1', 
@@ -45,7 +47,7 @@ describe('Company Controller', () => {
 		})		
 
 		test('Should return 400 if trade name is no provided', async () => {
-			const { body, statusCode } = await request(app)
+			const { body, statusCode } = await server 
 			.post('/company')
 			.send({ 
 				uf: 'TO',	
@@ -60,7 +62,7 @@ describe('Company Controller', () => {
 		})	
 
 		test('Should return 400 if cnpj is no provided', async () => {
-			const { body, statusCode } = await request(app)
+			const { body, statusCode } = await server 
 			.post('/company')
 			.send({ 
 				uf: 'TO',	
@@ -73,12 +75,11 @@ describe('Company Controller', () => {
 	})
 
 	describe('GET', () => {
+		let id: number
+
 		beforeEach(async () => {
 			const { body } = await server.post('/company').send(mockCompany)
-		})
-
-		afterEach(async () => {
-			
+			id = body.id
 		})
 
 		test('Should return 200 if find company success', async () => {
@@ -86,6 +87,13 @@ describe('Company Controller', () => {
 
 			expect(statusCode).toBe(200)
 			expect(body).toBeTruthy()
+		})
+
+		test('Should return 200 if sucesss deleting', async () => {
+			const { statusCode, text, body } = await server.delete(`/company/${id}`)
+
+			expect(statusCode).toBe(200)
+			expect(text).toStrictEqual(`"\Company with id ${id} deleted successfully\"`)
 		})
 	})
 })
