@@ -20,7 +20,7 @@ describe('Company Controller', () => {
 	}
 
 	describe('POST', () => {
-		test.only('Should return 201 if create natural person provider', async () => {
+		test('Should return 201 if create natural person provider', async () => {
 			const { body, statusCode } = await server
 			.post('/provider')
 			.send(naturalPerson)
@@ -34,6 +34,22 @@ describe('Company Controller', () => {
 			expect(body.trade_name).toBeTruthy()
 			expect(body.created_at).toBeTruthy()
 		})	
+
+		test('Should return 400 if trying create a minor natural person provider', async () => {
+			const { body, statusCode } = await server
+			.post('/provider')
+			.send({
+				name: 'any_name',
+				cpf: cpf.generate(),
+				rg: 'any_rg', 
+				phone: '63999999', 
+				birth_date: '2020-05-05',
+				company_id: 1
+			})
+
+			expect(statusCode).toBe(400)
+			expect(body.message).toBe('Is not allowed to register a minor, as a provider natural person')
+		})
 	})	
 })	
 
