@@ -50,6 +50,21 @@ describe('Company Controller', () => {
 			expect(statusCode).toBe(400)
 			expect(body.message).toBe('Is not allowed to register a minor, as a provider natural person')
 		})
+
+		test('Should return 400 if trying create natural person with no provided name', async () => {
+			const { body, statusCode } = await server
+			.post('/provider')
+			.send({
+				cpf: cpf.generate(),
+				rg: 'any_rg', 
+				phone: '63999999', 
+				birth_date: '1995-05-05',
+				company_id: 1
+			})
+
+			expect(statusCode).toBe(400)
+			expect(body.message).toEqual([{ isString: 'name must be a string' }])
+		})
 	})	
 })	
 
