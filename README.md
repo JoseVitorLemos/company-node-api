@@ -1,4 +1,4 @@
-## Company Node Api?
+## Company Node Api
 
 1. Typescript
 2. TDD with Jest
